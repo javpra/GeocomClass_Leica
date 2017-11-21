@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
-project(LEICA)
+project(leica_geocom)
 
 # Compiler specific options
  if(CMAKE_COMPILER_IS_GNUCXX)
@@ -19,8 +19,8 @@ add_definitions(${Qt5Network_DEFINITIONS})
 file(GLOB_RECURSE GEOCOM_LEICA "src/*.cpp" "src/*.h" "src/*.inl")
 
 # Add Library
-add_library(LeicaGeocom STATIC ${GEOCOM_LEICA})
+add_library(leica_geocom STATIC ${GEOCOM_LEICA})
 
-target_link_libraries(LeicaGeocom LINK_PUBLIC ${Qt5Widgets_LIBRARIES})
-target_link_libraries(LeicaGeocom LINK_PUBLIC ${Qt5Network_LIBRARIES})
-target_include_directories(LeicaGeocom PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(leica_geocom LINK_PUBLIC ${Qt5Widgets_LIBRARIES})
+target_link_libraries(leica_geocom LINK_PUBLIC ${Qt5Network_LIBRARIES})
+target_include_directories(leica_geocom PUBLIC ${PROJECT_SOURCE_DIR}/src)
