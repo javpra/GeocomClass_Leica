@@ -24,3 +24,12 @@ add_library(leica_geocom STATIC ${GEOCOM_LEICA})
 target_link_libraries(leica_geocom LINK_PUBLIC ${Qt5Widgets_LIBRARIES})
 target_link_libraries(leica_geocom LINK_PUBLIC ${Qt5Network_LIBRARIES})
 target_include_directories(leica_geocom PUBLIC ${PROJECT_SOURCE_DIR}/src)
+
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+	add_custom_target(doc
+	${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMENT "Generating API documentation with Doxygen" VERBATIM )
+endif(DOXYGEN_FOUND)
