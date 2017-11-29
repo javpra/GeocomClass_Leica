@@ -15,6 +15,13 @@ find_package(Qt5Network REQUIRED)
 include_directories(${Qt5Network_INCLUDE_DIRS})
 add_definitions(${Qt5Network_DEFINITIONS})
 
+find_package(catkin)
+
+if(${catkin_FOUND})
+	catkin_package( )
+endif()
+
+
 
 file(GLOB_RECURSE GEOCOM_LEICA "src/*.cpp" "src/*.h" "src/*.inl")
 
