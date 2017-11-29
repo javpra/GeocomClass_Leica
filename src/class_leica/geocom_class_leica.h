@@ -50,7 +50,7 @@ public:
     * @param mode Modo de medición. Por defecto es 1
     * @return std::vector<std::string> Un vector con los parámetros de respuesta.
     */
-    std::vector<std::string> TMC_GetCoordinate(int WaitTime,int mode);
+    std::vector<std::string> TMC_GetCoordinate(int WaitTime=100,int mode=1);
     /** @fn TMC_GetStation
     * @brief Obtiene la posición que tiene la estación total en el sistema de referencia
     * @return std::vector<std::string> Un vector con los parámetros de respuesta.
@@ -72,12 +72,8 @@ public:
     * @param _IP Dirección IP de la estación total
     * @return bool Devuelve true si la conexión se ha establecido correctamente.
     */
-    bool connectSocket(int _port, char* _IP);
-    /** @fn initTotalStation
-    * @brief llama de forma automática una serie de funciones que sirven para inicializar la estación total la primera vez
-    * @return void.
-    */
-    void initTotalStation();
+
+    int initTotalStation();
     /** @fn SetPrismType
     * @brief Establece el tipo de prisma o reflector a usar
     * @param prism Entero que indica el tipo de prisma a usar
@@ -145,6 +141,11 @@ public:
     std::string createRequest(int cmd,std::string args);
 
 private:
+    bool connectSocket(int _port, char* _IP);
+    /** @fn initTotalStation
+    * @brief llama de forma automática una serie de funciones que sirven para inicializar la estación total la primera vez
+    * @return void.
+    */
     myTCPclient clientSocket; ///< Variable del socket Leica
     char serverReply[2000]; ///< buffer con la respuesta de la Total Station
 };

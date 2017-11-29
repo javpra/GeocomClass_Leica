@@ -109,17 +109,18 @@ std::string GeoCom_Class_Leica::AUT_LockIn()
     std::vector<std::string> params = GeoCom_Class_Leica::writeAndRead(req);
     return params[0];
 }
-/****************************************************************************** ConnectSocket ********************************************************************************************/
-bool GeoCom_Class_Leica::connectSocket(int _port, char *_IP)
-{
-    //std::cout << "\nIP direction of server: " << _IP << " with port number: " << _port << std::endl;
-    std::cout << "Connecting to TS Leica..." << std::endl;
-    return clientSocket.connectToHost(_IP,_port);
-}
 /****************************************************************************** InitTotalStation *****************************************************************************************/
-void GeoCom_Class_Leica::initTotalStation()
+int GeoCom_Class_Leica::initTotalStation()
 {
-    GeoCom_Class_Leica::SetPrismType(7); //7 for mini prism and 3 for normal prism
+
+    if(GeoCom_Class_Leica::connectSocket(1212,"192.168.254.3")==false)
+    {
+        std::cout << "Connection to TS Leica failed" << std::endl;
+        return -1;
+    }
+    std::cout << "Connection to TS Leica successful" << std::endl;
+
+    GeoCom_Class_Leica::SetPrismType(7);
     std::string GRC_OK = GeoCom_Class_Leica::AUT_LockIn();
     while (std::stoi(GRC_OK)!=0){
         std::cout << "Locking for target..." << std::endl;
@@ -127,10 +128,8 @@ void GeoCom_Class_Leica::initTotalStation()
         GRC_OK = GeoCom_Class_Leica::AUT_LockIn();
     }
     std::cout << "Target detected. LockIn execution successful" << std::endl;
-    //GeoCom_Class_Leica::TMC_SetOrientation(0);
     GeoCom_Class_Leica::TMC_SetEdmMode(9);
     GeoCom_Class_Leica::TMC_DoMeasure(1,1);
-//    TMC_GetSimpleMea(5,1);
     GeoCom_Class_Leica::TMC_QuickDist();
     GeoCom_Class_Leica::TMC_GetCoordinate(1000,1);
 }
@@ -234,3 +233,13 @@ void GeoCom_Class_Leica::AUS_SetUserLockState(bool state)
 
 }
 /*****************************************************************************************************************************************************************************************/
+
+
+//.................. PRIVATE METHODS................//
+/****************************************************************************** ConnectSocket ********************************************************************************************/
+bool GeoCom_Class_Leica::connectSocket(int _port, char *_IP)
+{
+    //std::cout << "\nIP direction of server: " << _IP << " with port number: " << _port << std::endl;
+    std::cout << "Connecting to TS Leica..." << std::endl;
+    return clientSocket.connectToHost(_IP,_port);
+}
