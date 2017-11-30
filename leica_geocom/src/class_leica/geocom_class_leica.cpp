@@ -5,43 +5,6 @@ GeoCom_Class_Leica::GeoCom_Class_Leica()
 {
 }
 
-/*********************************************************************************** Split ***********************************************************************************************/
-std::vector<std::string> GeoCom_Class_Leica::split(char *buf)
-{
-    std::string reply(buf);
-    std::vector<std::string> words,parameters;
-    int pos=0,length=0;
-
-    for(int i=0;i<2;i++){ // I know there is two "," before the ":", so I make a while loop with that dimension
-        length=reply.find(",",pos);
-        words.push_back(reply.substr(pos,length-pos));  // The first components are stored for future applications
-        pos=length+1;
-    }
-    length=reply.find(":",pos);
-    words.push_back(reply.substr(pos,length-pos));
-
-    pos=length+1;
-    while(length != -1){ //If it doesn't find anything it returns -1 and leaves the while loop. In the last parameter, pos value is 0 (pos = -1 + 1)
-        length=reply.find(",",pos);
-        parameters.push_back(reply.substr(pos,length-pos));
-        pos=length+1;
-    }
-    return parameters;
-}
-/******************************************************************************* write and read ******************************************************************************************/
-std::vector<std::string> GeoCom_Class_Leica::writeAndRead(std::string cmd)
-{
-    if(clientSocket.writeData(QByteArray(cmd.c_str(), cmd.size()))==false){
-        std::cout << "Error sending data through the socket" << std::endl;
-    }
-    //std::cout << "Printing the data sended to the Total Station: " << buffer << std::endl;
-    if(clientSocket.receiveData(serverReply)==false){
-        std::cout << "Error reading data from the socket" << std::endl;
-    }
-    //std::cout << "Printing the data received by the Total Station: " << serverReply << std::endl;
-    std::vector<std::string> params= GeoCom_Class_Leica::split(serverReply);
-    return params;
-}
 /******************************************************************************* TMC_GetAngle ********************************************************************************************/
 std::vector<std::string> GeoCom_Class_Leica::TMC_GetAngle(int mode)
 {
@@ -93,13 +56,6 @@ std::vector<std::string> GeoCom_Class_Leica::TMC_GetSimpleMea(int WaitTime,int m
     auto req  = GeoCom_Class_Leica::createRequest(2108,std::to_string(WaitTime)+","+std::to_string(mode));
     std::vector<std::string> params = GeoCom_Class_Leica::writeAndRead(req);
     return params;
-}
-/******************************************************************************** CreateRequest ******************************************************************************************/
-std::string GeoCom_Class_Leica::createRequest(int cmd,std::string args)
-{
-    std::string request = "%R1Q,"; // Probar a añadir al principio \n, es decir, quedaría de la forma "\n%R1Q"
-    request = request + std::to_string(cmd) + ":" + args + "\r\n";
-    return request;
 }
 /********************************************************************************* AUT_LockIn ********************************************************************************************/
 std::string GeoCom_Class_Leica::AUT_LockIn()
@@ -242,4 +198,48 @@ bool GeoCom_Class_Leica::connectSocket(int _port, char *_IP)
     //std::cout << "\nIP direction of server: " << _IP << " with port number: " << _port << std::endl;
     std::cout << "Connecting to TS Leica..." << std::endl;
     return clientSocket.connectToHost(_IP,_port);
+}
+/******************************************************************************** CreateRequest ******************************************************************************************/
+std::string GeoCom_Class_Leica::createRequest(int cmd,std::string args)
+{
+    std::string request = "%R1Q,"; // Probar a añadir al principio \n, es decir, quedaría de la forma "\n%R1Q"
+    request = request + std::to_string(cmd) + ":" + args + "\r\n";
+    return request;
+}
+/******************************************************************************* write and read ******************************************************************************************/
+std::vector<std::string> GeoCom_Class_Leica::writeAndRead(std::string cmd)
+{
+    if(clientSocket.writeData(QByteArray(cmd.c_str(), cmd.size()))==false){
+        std::cout << "Error sending data through the socket" << std::endl;
+    }
+    //std::cout << "Printing the data sended to the Total Station: " << buffer << std::endl;
+    if(clientSocket.receiveData(serverReply)==false){
+        std::cout << "Error reading data from the socket" << std::endl;
+    }
+    //std::cout << "Printing the data received by the Total Station: " << serverReply << std::endl;
+    std::vector<std::string> params= GeoCom_Class_Leica::split(serverReply);
+    return params;
+}
+/*********************************************************************************** Split ***********************************************************************************************/
+std::vector<std::string> GeoCom_Class_Leica::split(char *buf)
+{
+    std::string reply(buf);
+    std::vector<std::string> words,parameters;
+    int pos=0,length=0;
+
+    for(int i=0;i<2;i++){ // I know there is two "," before the ":", so I make a while loop with that dimension
+        length=reply.find(",",pos);
+        words.push_back(reply.substr(pos,length-pos));  // The first components are stored for future applications
+        pos=length+1;
+    }
+    length=reply.find(":",pos);
+    words.push_back(reply.substr(pos,length-pos));
+
+    pos=length+1;
+    while(length != -1){ //If it doesn't find anything it returns -1 and leaves the while loop. In the last parameter, pos value is 0 (pos = -1 + 1)
+        length=reply.find(",",pos);
+        parameters.push_back(reply.substr(pos,length-pos));
+        pos=length+1;
+    }
+    return parameters;
 }

@@ -20,12 +20,6 @@ class GeoCom_Class_Leica
 {
 public:
     GeoCom_Class_Leica();
-    /** @fn split
-    * @brief Separa la cadena de caracteres de la respuesta en los diferentes parametros
-    * @param buf Cadena de caracteres con información de la petición
-    * @return std::vector<std::string> Un vector con los parámetros de respuesta.
-    */
-    std::vector<std::string> split(char *buf);
     /** @fn TMC_GetAngle
     * @brief Obtiene los ángulos que tenga el instrumento en ese momento
     * @param mode Modo de medición. Por defecto es 1
@@ -66,13 +60,10 @@ public:
     * @return std::vector<std::string> Un vector con los parámetros de respuesta.
     */
     std::vector<std::string> TMC_SetStation(double eastCoord, double northCoord, double heightCoord, double instrumentHeight, double offset = -1);
-    /** @fn connectSocket
-    * @brief Conexión al socket que se encarga de comunicar los datos con la estación total.
-    * @param _port Puerto del socket donde se realiza la conexión
-    * @param _IP Dirección IP de la estación total
-    * @return bool Devuelve true si la conexión se ha establecido correctamente.
+    /** @fn initTotalStation
+    * @brief llama de forma automática una serie de funciones que sirven para inicializar la estación total la primera vez
+    * @return void.
     */
-
     int initTotalStation();
     /** @fn SetPrismType
     * @brief Establece el tipo de prisma o reflector a usar
@@ -125,7 +116,22 @@ public:
     * @brief Si está activado el modo de seguimiento (@see AUS_SetUserLockState) esta función fijará el prisma y lo seguirá de forma continua.
     * @return Variable de error para determianr si todo es correcto. Si devuelve 0 todo OK.
     */
-    std::string AUT_LockIn();
+    std::string AUT_LockIn();    
+
+private:
+    /** @fn connectSocket
+    * @brief Conexión al socket que se encarga de comunicar los datos con la estación total.
+    * @param _port Puerto del socket donde se realiza la conexión
+    * @param _IP Dirección IP de la estación total
+    * @return bool Devuelve true si la conexión se ha establecido correctamente.
+    */
+    bool connectSocket(int _port, char* _IP);
+    /** @fn split
+    * @brief Separa la cadena de caracteres de la respuesta en los diferentes parametros
+    * @param buf Cadena de caracteres con información de la petición
+    * @return std::vector<std::string> Un vector con los parámetros de respuesta.
+    */
+    std::vector<std::string> split(char *buf);
     /** @fn writeAndRead
     * @brief Escribe una petición en el socket que manda a la TS y lee la respuesta del instrumento.
     * @param cmd Cadena de caracteres con la petición en formato ASCII.
@@ -140,12 +146,6 @@ public:
     */
     std::string createRequest(int cmd,std::string args);
 
-private:
-    bool connectSocket(int _port, char* _IP);
-    /** @fn initTotalStation
-    * @brief llama de forma automática una serie de funciones que sirven para inicializar la estación total la primera vez
-    * @return void.
-    */
     myTCPclient clientSocket; ///< Variable del socket Leica
     char serverReply[2000]; ///< buffer con la respuesta de la Total Station
 };
