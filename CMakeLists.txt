@@ -1,0 +1,2 @@
+add_subdirectory(leica_geocom)
+add_subdirectory(example_leica_geocom)
